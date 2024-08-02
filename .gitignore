@@ -3,6 +3,9 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 
+# Dependencies from conan
+/deps/*.cmake
+
 Testing
 Makefile
 cmake_install.cmake

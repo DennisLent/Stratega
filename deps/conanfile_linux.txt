@@ -2,24 +2,21 @@
 zlib/1.2.12
 gtest/1.11.0
 opengl/system
-pybind11/2.6.1
+pybind11/2.7.1
 recastnavigation/cci.20200511
 yaml-cpp/0.7.0
-imgui/1.84.2
+imgui/1.85
 doxygen/1.9.2
 boost/1.78.0
-sfml/2.5.1
-imgui-sfml/2.1
 
 [options]
-boost:shared=False
-sfml:shared=True
-imgui-sfml:shared=True
+boost/*:shared=False
+sfml/*:shared=True
+imgui-sfml/*:shared=True
 
 [generators]
-cmake
-cmake_find_package
-cmake_paths
+CMakeToolchain
+CMakeDeps
 
 [imports]
 lib, *.dylib* -> ./bin

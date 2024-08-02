@@ -34,11 +34,6 @@ BasicRTS(RTS)
 # Experiments of IEEE TOG paper: Elastic Monte Carlo Tree Search
 Please check the `tog_ktkpta` branch for *KillTheKing* and *Pusher* games. *Two Kingdoms* is in the `tog_tk` branch.
 
-# Notes on linux release
-- updated the Conan.cmake file in the ```cmake/settings/Conan.cmake``
-- important to run ```conan profile detect```
-- build command: ```cmake -S . -B out -DCMAKE_BUILD_TYPE=Release```
-
 # Research based on Stratega
 ```
 @ARTICLE{10143265,

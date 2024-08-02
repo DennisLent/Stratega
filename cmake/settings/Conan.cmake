@@ -11,7 +11,7 @@ macro(run_conan)
     include(${CMAKE_BINARY_DIR}/conan.cmake)
     
     message(STATUS "Manually adding bincrafters remote repository")
-    execute_process(COMMAND ${CONAN_PATH} remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
+    #execute_process(COMMAND ${CONAN_PATH} remote add bincrafters https://center.conan.io)
     
     # Set SSL verification explicitly
     message(STATUS "Setting SSL verification to True")

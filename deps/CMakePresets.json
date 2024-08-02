@@ -1,0 +1,44 @@
+{
+    "version": 3,
+    "vendor": {
+        "conan": {}
+    },
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 15,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "conan-release",
+            "displayName": "'conan-release' config",
+            "description": "'conan-release' configure using 'Unix Makefiles' generator",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_POLICY_DEFAULT_CMP0091": "NEW",
+                "CMAKE_BUILD_TYPE": "Release"
+            },
+            "environment": {
+                "AUTOMAKE_CONAN_INCLUDES": "/home/dennis/.conan2/p/b/xapiafe987b3973fb2/p/res/aclocal:$penv{AUTOMAKE_CONAN_INCLUDES}"
+            },
+            "toolchainFile": "conan_toolchain.cmake",
+            "binaryDir": "/home/dennis/Desktop/MSc/Thesis/Stratega/deps"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "conan-release",
+            "configurePreset": "conan-release",
+            "jobs": 20
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "conan-release",
+            "configurePreset": "conan-release",
+            "environment": {
+                "PATH": "/home/dennis/.conan2/p/b/doxygde955c3057bbf/p/bin:$penv{PATH}"
+            }
+        }
+    ]
+}
