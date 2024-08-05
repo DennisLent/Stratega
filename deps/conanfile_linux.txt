@@ -9,6 +9,9 @@ imgui/1.85
 doxygen/1.9.2
 boost/1.78.0
 
+[tool_requires]
+cmake/3.30.1
+
 [options]
 boost/*:shared=False
 sfml/*:shared=True

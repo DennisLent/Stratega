@@ -173,9 +173,13 @@ else()
     add_compile_definitions(BUILD_HEADLESS)
     set(ENABLE_STRATEGA_BINDINGS OFF)
 endif()
-#include(${CMAKE_CONFIG_FOLDER}/modules/FetchCParse.cmake)
-include(${CMAKE_CONFIG_FOLDER}/settings/Conan.cmake)
-run_conan()
+
+include(${CMAKE_CONFIG_FOLDER}/modules/FetchCParse.cmake)
+
+# This is not needed since we already run conan seperatly
+# include(${CMAKE_CONFIG_FOLDER}/settings/Conan.cmake)
+# run_conan()
+
 include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
 include(${PROJECT_BINARY_DIR}/conan_paths.cmake)
 

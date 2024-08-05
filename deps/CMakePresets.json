@@ -19,8 +19,10 @@
                 "CMAKE_BUILD_TYPE": "Release"
             },
             "environment": {
+                "PATH": "/home/dennis/.conan2/p/cmakefaa1321642d5b/p/bin:$penv{PATH}",
                 "AUTOMAKE_CONAN_INCLUDES": "/home/dennis/.conan2/p/b/xapiafe987b3973fb2/p/res/aclocal:$penv{AUTOMAKE_CONAN_INCLUDES}"
             },
+            "cmakeExecutable": "/home/dennis/.conan2/p/cmakefaa1321642d5b/p/bin/cmake",
             "toolchainFile": "conan_toolchain.cmake",
             "binaryDir": "/home/dennis/Desktop/MSc/Thesis/Stratega/deps"
         }

@@ -1,17 +1,18 @@
 macro(run_conan)
-    # Download the latest version of conan.cmake
+
+#     Download the latest version of conan.cmake if not already downloaded
     if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
         message(
                 STATUS
-                "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-        file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/develop/conan.cmake"
+                "Downloading conan.cmake from https://raw.githubusercontent.com/conan-io/cmake-conan/develop2/conan_provider.cmake")
+        file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/develop2/conan_provider.cmake"
                 "${CMAKE_BINARY_DIR}/conan.cmake")
     endif ()
 
     include(${CMAKE_BINARY_DIR}/conan.cmake)
     
     message(STATUS "Manually adding bincrafters remote repository")
-    #execute_process(COMMAND ${CONAN_PATH} remote add bincrafters https://center.conan.io)
+    execute_process(COMMAND ${CONAN_PATH} remote add bincrafters https://center.conan.io)
     
     # Set SSL verification explicitly
     message(STATUS "Setting SSL verification to True")
@@ -31,22 +32,3 @@ macro(run_conan)
             PROFILE default
     )
 endmacro()
-
-# FetchContent for SFML with updated method
-include(FetchContent)
-FetchContent_Declare(
-  sfml
-  GIT_REPOSITORY https://github.com/SFML/SFML.git
-  GIT_TAG 2.6.x
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-)
-FetchContent_MakeAvailable(sfml)
-
-# FetchContent for IMGUI-SFML with updated method
-FetchContent_Declare(
-  imgui-sfml
-  GIT_REPOSITORY https://github.com/eliasdaler/imgui-sfml.git
-  GIT_TAG v2.1
-  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-)
-FetchContent_MakeAvailable(imgui-sfml)
