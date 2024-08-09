@@ -9,11 +9,11 @@ target_include_directories(imgui PUBLIC ${imgui-sfml_SOURCE_DIR})
 
 target_link_libraries(imgui
         PRIVATE
-        CONAN_PKG::imgui
+        imgui::imgui
         # other platforms use Conan's `sfml`
         "$<$<PLATFORM_ID:Darwin>:CONAN_PKG::opengl>"
         #OpenGL
-        "$<$<PLATFORM_ID:Linux>:CONAN_PKG::opengl>"
+        "$<$<PLATFORM_ID:Linux>:opengl::opengl>"
         "$<$<PLATFORM_ID:Windows>:CONAN_PKG::opengl>"
         #"$<$<PLATFORM_ID:Windows>:CONAN_PKG::sfml>"
         #CONAN_PKG::sfml
@@ -30,5 +30,5 @@ target_link_libraries(imgui
         sfml-system
         sfml-graphics
         sfml-window
-        #CONAN_PKG::opengl        
+        # opengl::opengl        
         )

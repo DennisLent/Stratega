@@ -124,16 +124,16 @@ function(target_link_libraries_system target)
   endforeach(lib)
 endfunction(target_link_libraries_system)
 
-target_link_libraries_system(Stratega CONAN_PKG::boost)
-target_link_libraries_system(Stratega CONAN_PKG::yaml-cpp)
-target_link_libraries_system(Stratega CONAN_PKG::recastnavigation)
+target_link_libraries_system(Stratega boost::boost)
+target_link_libraries_system(Stratega yaml-cpp::yaml-cpp)
+target_link_libraries_system(Stratega recastnavigation::recastnavigation)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(Stratega Threads::Threads)
 endif()
 
 if(NOT SGA_BUILD_HEADLESS)
-    target_link_libraries_system(Stratega CONAN_PKG::imgui)
+    target_link_libraries_system(Stratega imgui::imgui)
     target_link_libraries_system(Stratega imgui)
 
     #if(UNIX AND NOT APPLE)
