@@ -1,0 +1,48 @@
+{
+    "name": "stratega",
+    "version": "1.0.0",
+    "dependencies": [
+      {
+        "name": "zlib",
+        "version>=": "1.2.12"
+      },
+      {
+        "name": "gtest",
+        "version>=": "1.11.0"
+      },
+      {
+        "name": "opengl"
+      },
+      {
+        "name": "pybind11",
+        "version>=": "2.13.5"
+      },
+      {
+        "name": "recastnavigation"
+      },
+      {
+        "name": "yaml-cpp",
+        "version>=": "0.7.0"
+      },
+      {
+        "name": "imgui",
+        "features": [
+        "glfw-binding",
+        "opengl3-binding"
+      ]
+      },
+      {
+        "name": "boost-random"
+      },
+      {
+        "name": "sfml"
+      },
+      {
+        "name": "imgui-sfml"
+      },
+      {
+        "name": "python3"
+      }
+    ],
+    "builtin-baseline": "f5ec6f30ff70f04f841436a0f36600bdbabfcfbf"
+  }

@@ -1,0 +1,18 @@
+jax[cuda12] == 0.4.30
+setuptools >= 69.5.1
+jaxtyping >= 0.2.30
+optax >= 0.2.3
+pytest >= 8.2.2
+flake8-pyproject >= 1.2.3
+flake8 >= 7.1.0
+flashbax == 0.1.2
+rlax == 0.1.6
+mctx == 0.0.5
+flax >= 0.8.4
+wandb >= 0.17.2
+tqdm >= 4.66.4
+pyyaml >= 6.0.1
+jit-env >= 0.1.5
+brax==0.10.5
+jumanji==1.0.1
+pgx == 2.0.1

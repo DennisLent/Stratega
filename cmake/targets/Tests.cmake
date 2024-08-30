@@ -16,5 +16,5 @@ set_target_properties(tests PROPERTIES
 
 target_link_libraries(tests PRIVATE
         Stratega
-        CONAN_PKG::gtest)
+        gtest)
 

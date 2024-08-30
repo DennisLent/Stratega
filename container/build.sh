@@ -1,0 +1,1 @@
+apptainer build container/container.sif container/container.def

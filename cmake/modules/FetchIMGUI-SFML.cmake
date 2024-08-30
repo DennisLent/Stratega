@@ -1,9 +1,9 @@
 include(FetchContent)
 
-set(IMGUI-SFML_VERSION 2.5)
+set(IMGUI-SFML_VERSION 2.6)
 FetchContent_Declare (
 		imgui-sfml
-		URL "https://github.com/eliasdaler/imgui-sfml/archive/refs/tags/v${IMGUI-SFML_VERSION}.zip"
+		URL "https://github.com/SFML/imgui-sfml/archive/refs/tags/v${IMGUI-SFML_VERSION}.zip"
 )
 FetchContent_GetProperties(sfml)
 if(NOT imgui-sfml_POPULATED)

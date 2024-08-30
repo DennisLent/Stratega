@@ -2,15 +2,12 @@
 zlib/1.2.12
 gtest/1.11.0
 opengl/system
-pybind11/2.6.1
+pybind11/2.13.5
 recastnavigation/cci.20200511
 yaml-cpp/0.7.0
-imgui/1.84.2
+imgui/cci.20230105+1.89.2.docking
 doxygen/1.9.2
-boost/1.78.0
-
-[options]
-boost:shared=False
+boost/1.85.0
 
 [generators]
 cmake

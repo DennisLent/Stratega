@@ -1,0 +1,52 @@
+Bootstrap: docker
+FROM: nvidia/cuda:12.5.0-devel-ubuntu22.04
+
+%post
+    apt-get update
+    apt-get -yq install software-properties-common
+    apt-get update
+    apt-get -yq --no-install-recommends install \
+        build-essential \
+        apt-transport-https \
+        ca-certificates \
+        aptitude \
+        wget \
+        vim \
+        rsync \
+	    swig \
+        libgl1 \
+        libx11-dev \
+        zlib1g-dev \
+        libsm6 \
+        libxrender1 \
+        libxext-dev \
+        cmake \
+        unzip \
+        libgl-dev \
+        libgl-dev \
+        python3-pip \
+        pkg-config \
+        git \
+        autoconf \
+        automake \
+        autoconf-archive \
+        ccache \
+        libx11-dev \
+        libxrandr-dev \
+        libxcursor-dev \
+        libxi-dev \
+        libudev-dev \
+        libgl1-mesa-dev \
+        libxinerama-dev \
+        libxcursor-dev \
+        xorg-dev \
+        curl \
+        zip \
+        libglu1-mesa-dev \
+        pkg-config \
+        libtool \
+        libboost-all-dev
+    pip install conan
+
+%environment
+    export LC_ALL=C

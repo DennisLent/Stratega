@@ -33,3 +33,6 @@ tests/gtest/*
 
 # Local History for Visual Studio Code
 .history/
+
+vcpkg
+vcpkg_installed

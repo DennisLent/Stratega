@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.18)
+﻿cmake_minimum_required(VERSION 3.16)
 project(Stratega LANGUAGES C CXX)
 
 #Uncomment if building for Apple
@@ -9,18 +9,17 @@ project(Stratega LANGUAGES C CXX)
 #Uncomment if building for Apple with M1 arch arm64
 #set (CMAKE_OSX_ARCHITECTURES "arm64")
 
-# project set'tings
+# project settings
 set(CMAKE_CONFIG_FOLDER "cmake")
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
-
 
 set(DEPENDENCY_DIR "deps")
 set(PROJ_CXX_STD_FEATURE cxx_std_14)
 set(PROJ_CXX_STANDARD C++14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 14)
-set(CONAN_SYSTEM_INCLUDES ON)
+
 set(CMAKE_NO_SYSTEM_FROM_IMPORTED OFF)
 set(PROJ_SOURCES_DIR "${CMAKE_SOURCE_DIR}/src")
 set(PROJ_TEST_FOLDER "${CMAKE_SOURCE_DIR}/test")
@@ -57,32 +56,6 @@ option(SGA_BUILD_HEADLESS "Compile Stratega in headless mode" OFF)
 
 # If you are building for MacOS with M1,this option should be ON
 option(SGA_BUILD_SFML_FROM_SOURCE "Compile SFML 2.6.x" OFF)
-
-
-# On linux SFML is not (yet) available from conan due to a missing lib dependency in their recipe.
-# We will have to fetch it manually in this case and add it to our project.
-if (CMAKE_SYSTEM_NAME MATCHES Linux)
-    set(CONANFILE conanfile_linux.txt)
-    message(STATUS "running on Linux conanfile_linux")
-elseif (CMAKE_SYSTEM_NAME MATCHES Darwin)
-    
-    if (NOT SGA_BUILD_SFML_FROM_SOURCE)
-        set(CONANFILE conanfile_mac_sfml.txt)
-        message(STATUS "running on Mac conanfile_mac_sfml")
-    else()
-        set(CONANFILE conanfile_mac.txt)
-        message(STATUS "running on Mac conanfile_mac")
-    endif()
-else ()
-    
-    if (NOT SGA_BUILD_SFML_FROM_SOURCE)
-        set(CONANFILE conanfile_windows_sfml.txt)
-        message(STATUS "running on Windows conanfile_sfml")
-    else()
-        set(CONANFILE conanfile_windows.txt)
-        message(STATUS "running on Windows conanfile_windows")
-    endif()
-endif ()
 
 #If CMAKE_NO_SYSTEM_FROM_IMPORTED is OFF, pybind11 should be treated as SYSTEM and it should not throw warnings
 #but it does for some reason that we dont know.
@@ -148,38 +121,6 @@ enable_doxygen()
 # allow for static analysis
 include(${CMAKE_CONFIG_FOLDER}/settings/StaticAnalyzers.cmake)
 
-# configure conan and fetch all dependencies
-if(NOT SGA_BUILD_HEADLESS)   
-    # on linux SFML is not (yet) available from conan due to a missing lib dependency in their recipe.
-    # We will have to fetch it manually in this case and add it to our project.
-    if (SGA_BUILD_SFML_FROM_SOURCE OR CMAKE_SYSTEM_NAME MATCHES Linux)
-        include(${CMAKE_CONFIG_FOLDER}/modules/FetchSFML.cmake)
-        message(STATUS "FetchSFML 2.6.x")
-        #if (CMAKE_SYSTEM_NAME MATCHES Linux)
-        ## # on linux SFML is not (yet) available from conan due to a missing lib dependency in their recipe.
-        ## # We will have to fetch it manually in this case and add it to our project.
-        #include(${CMAKE_CONFIG_FOLDER}/modules/FetchSFML.cmake)
-        #message(STATUS "running on Linux FetchSFML")
-        #elseif (CMAKE_SYSTEM_NAME MATCHES Darwin)
-        ## #MacOS
-        # include(${CMAKE_CONFIG_FOLDER}/modules/FetchSFML.cmake)
-        # message(STATUS "running on Mac FetchSFML")
-        #endif ()
-    else()
-        message(STATUS "NO FetchSFML 2.6.x")
-    endif ()
-    include(${CMAKE_CONFIG_FOLDER}/modules/FetchIMGUI-SFML.cmake)
-else()
-    add_compile_definitions(BUILD_HEADLESS)
-    set(ENABLE_STRATEGA_BINDINGS OFF)
-endif()
-#include(${CMAKE_CONFIG_FOLDER}/modules/FetchCParse.cmake)
-include(${CMAKE_CONFIG_FOLDER}/settings/Conan.cmake)
-run_conan()
-include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
-include(${PROJECT_BINARY_DIR}/conan_paths.cmake)
-
-
 # find the downloaded/installed packages
 if (CMAKE_SYSTEM_NAME MATCHES Linux)
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
@@ -187,42 +128,39 @@ if (CMAKE_SYSTEM_NAME MATCHES Linux)
  endif ()
 find_package(Threads)
 
-if(NOT SGA_BUILD_HEADLESS)
-   find_package(imgui REQUIRED)
-   find_package(OpenGL REQUIRED)
-   if (SGA_BUILD_SFML_FROM_SOURCE OR CMAKE_SYSTEM_NAME MATCHES Linux)
-       add_subdirectory(${sfml_SOURCE_DIR} ${sfml_BINARY_DIR} EXCLUDE_FROM_ALL)
-       #find_package(SFML COMPONENTS system window graphics REQUIRED)
-       #find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
-   else ()
-       find_package(SFML COMPONENTS system window graphics REQUIRED)
-   endif ()
-endif()
+# if(NOT SGA_BUILD_HEADLESS)
+   
+# endif()
 
+find_package(imgui REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(SFML COMPONENTS system window graphics REQUIRED)
 find_package(Boost REQUIRED COMPONENTS random)
 find_package(yaml-cpp REQUIRED)
 find_package(recastnavigation REQUIRED)
 
-
-
 # define the targets of the project
 if(NOT SGA_BUILD_HEADLESS)
+   include(${CMAKE_CONFIG_FOLDER}/modules/FetchIMGUI-SFML.cmake)
    include(${CMAKE_CONFIG_FOLDER}/targets/IMGUI.cmake)
    include(${CMAKE_CONFIG_FOLDER}/targets/GUI.cmake)
 endif()
 
-include(${CMAKE_CONFIG_FOLDER}/targets/Arena.cmake)
 include(${CMAKE_CONFIG_FOLDER}/targets/Stratega.cmake)
+include(${CMAKE_CONFIG_FOLDER}/targets/Arena.cmake)
+
 if (ENABLE_STRATEGA_BINDINGS)
     message("\nPyBindings enabled, configuring.\n")
     add_subdirectory("src/python")
 endif ()
-if (ENABLE_BUILD_DOCS)
-    message("\nDocs enabled, configuring.\n")
-    add_subdirectory("docs")
-endif ()
-if (ENABLE_TESTING)
-    enable_testing()
-    message("\nTests enabled, configuring.\n")
-    include(${CMAKE_CONFIG_FOLDER}/targets/Tests.cmake)
-endif ()
+
+# if (ENABLE_BUILD_DOCS)
+#     message("\nDocs enabled, configuring.\n")
+#     add_subdirectory("docs")
+# endif ()
+
+# if (ENABLE_TESTING)
+#     enable_testing()
+#     message("\nTests enabled, configuring.\n")
+#     include(${CMAKE_CONFIG_FOLDER}/targets/Tests.cmake)
+# endif ()
