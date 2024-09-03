@@ -24,7 +24,7 @@ namespace SGA
     {
         //Initialize the budget for this action call.
         parameters_.resetCounters(timer);
-        //parameters_.printDetails();
+        // parameters_.printDetails();
 
         // generate actions
         const auto actionSpace = forwardModel.generateActions(state, getPlayerID());

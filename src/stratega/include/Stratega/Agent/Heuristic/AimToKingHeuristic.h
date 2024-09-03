@@ -7,6 +7,18 @@ namespace SGA
 	{
 	private:
 		int unitNum = -1;
+
+		// Hypothetical function to check if an entity can reach the opponent's king next turn
+		bool canReachKingNextTurn(const Entity* entity, int king_x, int king_y) const
+		{
+			if (entity == nullptr)
+				return false;
+
+			// Example logic to determine reachability based on movement points and distance
+			int distance = abs(entity->x() - king_x) + abs(entity->y() - king_y);
+			return entity->getParameter("MovementPoints") >= distance;
+		}
+
 	public:
 		AimToKingHeuristic(GameState& gameState) {
 			unitNum = static_cast<int>(gameState.getEntities().size());
@@ -29,7 +41,7 @@ namespace SGA
 			double total_distance = 0.0, mean_distance = 0.0;
 
 			std::map<int, Vector2f> positions;
-			std::set<int> opponentEntites = std::set<int>();
+			std::set<int> opponentEntities = std::set<int>();
 			std::set<int> playerEntities = std::set<int>();
 
 			double opponent_king_hp = 200.0;
@@ -38,7 +50,7 @@ namespace SGA
 				positions.emplace(entity.getID(), entity.getPosition());//entity.id, entity.position);
 				if (entity.getOwnerID() != gameState.getCurrentTBSPlayer()) //if (entity.ownerID != gameState.currentPlayer)
 				{
-					opponentEntites.insert(entity.getID());
+					opponentEntities.insert(entity.getID());
 
 					//auto& entityType = gameState.gameInfo->getEntityType(entity.typeID);
 					auto& entityType = gameState.getGameInfo()->getEntityType(entity.getEntityTypeID());
@@ -72,16 +84,39 @@ namespace SGA
 			}
 			mean_distance = total_distance / static_cast<double>(playerEntities.size());
 
-			double maximum_distance = 400.0;
-			score = 1.0 - mean_distance/ maximum_distance; // set to the mean of distance of our units to opponent units, divided by a constant 50 to make it slower than the gameOver score
+			// Adjust score based on distance to opponent's king
+			double maximum_distance = std::max(gameState.getBoardWidth(), gameState.getBoardHeight()) * 2.0;
+			score = 1.0 - mean_distance / maximum_distance;
 
 			score += 1.0 - opponent_king_hp / 400.0;
+
+			// Penalize if player's king is threatened by opponent units
+			double player_king_threat = 0.0;
+			for (const auto& entityID : opponentEntities)
+			{
+				auto* entity = gameState.getEntity(entityID);
+				player_king_threat += 1.0 / (abs(positions[entityID].x - king_x) + abs(positions[entityID].y - king_y) + 1.0);
+			}
+			score -= player_king_threat / opponentEntities.size();
+
+			// Consider potential gain from units reaching advantageous positions next turn
+			double potential_gain = 0.0;
+			for (const auto& entityID : playerEntities)
+			{
+				auto* entity = gameState.getEntity(entityID);
+				if (canReachKingNextTurn(entity, king_x, king_y))
+				{
+					potential_gain += 0.5; // Reward for potential advantageous positioning
+				}
+			}
+			score += potential_gain / playerEntities.size();
+
 
 			double Total_N_entities = 5.0;
 			//double Total_N_entities = unitNum;
 			Total_N_entities *= 4; // 4 for scaling
 			score += static_cast<double>(playerEntities.size()) / Total_N_entities;
-			score -= static_cast<double>(opponentEntites.size()) / Total_N_entities;
+			score -= static_cast<double>(opponentEntities.size()) / Total_N_entities;
 
 			return (score+2.0)/4.0;
 		}

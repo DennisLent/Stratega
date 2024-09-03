@@ -56,23 +56,20 @@ Tiles:
 Board:
     GenerationType: Manual
     Layout: |-
-        M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M
-        M  .  .  .  .  .  .  .  .  .  .  .  .  .  M  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  M
-        M  .  .  .  .  .  .  .  .  W  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  M
-        M  .  .  a1 .  .  .  .  .  W  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  M
-        M  .  a1 k1 h1 .  .  .  .  W  W  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  M
-        M  .  .  w1 w1 .  .  .  .  W  W  .  .  .  .  .  .  .  .  .  .  .  M  M  .  .  .  .  .  M  M  M
-        M  .  .  .  .  .  .  .  .  .  W  W  W  W  .  .  .  .  .  .  .  .  W  W  W  W  W  W  W  W  W  W
-        M  .  .  .  .  .  .  .  .  .  W  W  W  W  .  .  .  .  .  .  .  .  W  W  W  W  W  W  W  W  W  W
-        M  M  M  .  .  .  .  .  .  .  .  .  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W
-        M  .  .  .  .  .  .  .  .  .  .  .  .  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W  W
-        M  .  .  .  .  .  .  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  .  W  W  W  W  W
-        M  M  M  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  W  W  W  W  W
-        M  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  a0 .  .  .  .  .  .  M
-        M  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  a0 k0 h0 .  .  .  .  .  M
-        M  M  M  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  w0 w0 .  .  .  .  .  M
-        M  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  M
-        M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M  M
+        M  M  M  M  M  M  M  M  M  M  M  M
+        M  .  .  .  .  .  .  .  .  .  .  M
+        M  .  .  .  .  .  .  .  .  .  .  M
+        M  .  .  a1 .  .  .  .  .  .  .  M
+        M  .  a1 k1 h1 .  .  M  .  .  .  M
+        M  .  .  w1 w1 .  .  .  F  F  .  M
+        M  .  .  .  .  .  M  .  F  .  .  M
+        M  .  .  M  .  .  F  .  .  .  .  M
+        M  .  .  .  .  M  .  .  .  .  .  M
+        M  .  .  .  .  .  .  .  a0 .  .  M
+        M  .  .  .  .  .  .  a0 k0 h0 .  M
+        M  .  .  .  .  .  .  .  w0 w0 .  M
+        M  .  .  .  .  .  .  .  .  .  .  M
+        M  M  M  M  M  M  M  M  M  M  M  M
 Actions:
     Attack:
         Type: EntityAction
@@ -87,7 +84,7 @@ Actions:
                         Shape: AllPositions
                 Conditions:
                     - "DifferentPlayer(Source, Target)"
-                    # - "InRange(Source, Target, Source.AttackRange)"
+                    - "InRange(Source, Target, Source.AttackRange)"
         Effects:
             - "Attack(Target.Health, Source.AttackDamage)"
 
@@ -141,7 +138,7 @@ Entities:
         Actions: [Attack, Move]
         Parameters:
             Health: 200
-            AttackRange: 2
+            AttackRange: 1
             AttackDamage: 100
             MovementPoints: 2
 
@@ -151,7 +148,7 @@ Entities:
         LineOfSightRange: 10
         Parameters:
             Health: 100
-            AttackRange: 5
+            AttackRange: 2
             AttackDamage: 10
             MovementPoints: 2
         Actions: [Attack, Move]

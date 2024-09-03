@@ -13,7 +13,9 @@ int main()
 	//std::string configPath("../resources/gameConfigurations/TBS/TheBattleOfStratega.yaml");
 	//std::string configPath("../resources/gameConfigurations/RTS/Original/Settlers.yaml");
 	//std::string configPath("../resources/gameConfigurations/TBS/Tests/KillTheKingQueueTest.yaml");
-	std::string configPath("../resources/gameConfigurations/TBS/Original/KillTheKing.yaml");
+	// std::string configPath("../resources/gameConfigurations/TBS/Original/KillTheKing.yaml");
+	std::string configPath("../resources/gameConfigurations/TBS/Original/KillTheKingV2.yaml");
+	// std::string configPath("../resources/gameConfigurations/TBS/Original/PushThemAll.yaml");
 	//std::string configPath("../resources/gameConfigurations/TBS/Ported/Pathway.yaml");
 	//std::string configPath("../resources/gameConfigurations/TBS/Ported/IntoTheBreach.yaml");
 	auto gameConfig = SGA::loadConfigFromYAML(configPath);
