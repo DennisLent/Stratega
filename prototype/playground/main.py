@@ -1,6 +1,6 @@
 import argparse
-from agents.mcts import MCTSAgent, GameState
-from agents.emcts import EMCTSAgent
+from playground.agents.mcts import MCTSAgent, GameState
+from playground.agents.emcts import EMCTSAgent
 
 def main():
     parser = argparse.ArgumentParser(description="Run MCTS or EMCTS on the GameState.")
@@ -13,6 +13,7 @@ def main():
 
     state = GameState(random_init=args.random_init)
     runs = 1
+    total_actions = []
 
     while not state.done:
         print(f"=============== RUN {runs} ===============")
@@ -26,6 +27,8 @@ def main():
         
         print(f"Best action sequence: {best_action_sequence}")
         print(f"Best final node: {final_node}")
+
+        total_actions.extend(best_action_sequence)
         
         # Apply the sequence of actions to the game state
         state = state.simulate_turns(best_action_sequence)
@@ -34,6 +37,11 @@ def main():
         print(f"New state: {state}")
         state.print_map()
         runs += 1
+    
+    print("=============== OVERALL RESULTS ===============")
+    print(f"OVERALL RUNS: {runs}")
+    print(f"FINAL SEQUENCE: {total_actions}")
+    print(f"BEST FINAL NODE: {final_node}")
 
 if __name__ == "__main__":
     main()

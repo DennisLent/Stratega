@@ -1,5 +1,5 @@
 import copy
-from utils.gamestate import GameState
+from playground.utils.gamestate import GameState
 
 class TreeNode:
     def __init__(self, game_state: GameState, parent=None, action=None) -> None:
@@ -52,7 +52,7 @@ class TreeNode:
         return self.children[choices_weights.index(max(choices_weights))]
 
 # expand the tree from a given gamestate (node)
-def expand_tree(node: TreeNode, depth=1):
+def expand_tree(node: TreeNode, depth=0):
     if depth == 0 or node.game_state.done:
         return
     

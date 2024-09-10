@@ -1,11 +1,11 @@
 import time
 import random
-from utils.abstract_tree import AbstractTreeNode, GameState, copy
+from playground.utils.abstract_tree import AbstractTreeNode, GameState, copy
 import numpy as np
 
 # Elastic MCTS agent that uses approximate homomorphism
 class EMCTSAgent:
-    def __init__(self, game_state: GameState, time_limit=0.1, alpha_abs=100, batch_size=10, eta_r=5.0, eta_t=5.0):
+    def __init__(self, game_state: GameState, time_limit=0.1, alpha_abs=100, batch_size=20, eta_r=0.5, eta_t=1.42):
         self.root = AbstractTreeNode(game_state)
         self.time_limit = time_limit
         self.alpha_abs = alpha_abs
@@ -13,7 +13,7 @@ class EMCTSAgent:
         self.eta_r = eta_r
         self.eta_t = eta_t
         self.iteration_count = 0
-        self.state_abstraction = {}
+        self.nodes_to_merge = {}
     
     def count_nodes(self):
         visited = set()
@@ -33,6 +33,7 @@ class EMCTSAgent:
         start_time = time.time()
 
         while (time.time() - start_time) < self.time_limit:
+            
             if debug:
                 print(f"Iteration count: {self.iteration_count}")
             
@@ -43,19 +44,19 @@ class EMCTSAgent:
             self.backpropagate(node, reward)
             self.iteration_count += 1
 
-            if self.iteration_count % self.batch_size == 0:
-                if debug:
-                    print(f"Before homomorphism, node count: {self.count_nodes()}")
+            if (self.iteration_count > 0) and (self.iteration_count % self.batch_size) == 0:
+                # print(f"going into abstraction: {self.iteration_count} {self.iteration_count % self.batch_size}")
+                # print(f"Before homomorphism, node count: {self.count_nodes()}")
                 self.update_abstraction()
-                if debug:
-                    print(f"After homomorphism, node count: {self.count_nodes()}")
+                # print(f"After homomorphism, node count: {self.count_nodes()}")
 
             if self.iteration_count > self.alpha_abs:
-                print(f"Reverting abstraction after reaching alpha_abs limit.")
                 self.revert_abstraction()
                 if debug:
                     print(f"After reverting abstraction, node count: {self.count_nodes()}")
 
+        #at the end we have to revert the abstraction and return the best actions
+        self.revert_abstraction()
         return self.best_action_sequence()
 
     def select(self, node: AbstractTreeNode) -> AbstractTreeNode:
@@ -100,40 +101,67 @@ class EMCTSAgent:
         return max(self._get_max_depth(child, current_depth + 1) for child in node.children)
 
     # main method to be called when abstracting
-    def update_abstraction(self):
+    def update_abstraction(self) -> None:
         # determine the maximum depth
         max_depth = self._get_max_depth(self.root)
 
         # we go from leaves to root
         for depth in reversed(range(max_depth + 1)):
+            print(f"===== DEPTH {depth} =====")
             
             # we get all the nodes at this depth and see if we can group them
             nodes_at_depth = self._get_nodes_at_depth(depth)
+            # print(f"nodes at depth {depth}: {nodes_at_depth}")
             for node in nodes_at_depth:
-                self._group_nodes(node, depth)
-    
-    def _get_nodes_at_depth(self, depth) -> list[AbstractTreeNode]:
-        nodes = []
-        self._collect_nodes_at_depth(self.root, depth, 0, nodes)
-        return nodes
+                # we check all the nodes if we can group them
+                # we remove the node we are checking for to make sure that we only group the nodes that make sense
+                current_node_removed = [check_node for check_node in nodes_at_depth if check_node != node]
 
-    def _collect_nodes_at_depth(self, node, target_depth, current_depth, nodes) -> list[AbstractTreeNode]:
+                self.nodes_to_merge[node] = []
+
+                for other_node in current_node_removed:
+                    # print(f"{node} and {other_node}")
+                    # print(f"e_r = {self._calculate_reward_error(node, other_node)}")
+                    # print(f"e_t = {self._calculate_transition_error(node, other_node)}")
+                    if (self._is_similar(node, other_node)) and (node.parent == other_node.parent):
+                        # print(f"merging node1: {node} & node2: {other_node}")
+                        self.nodes_to_merge[node].append(other_node)
+            # we now have a dictionary of nodes and nodes that it can merge with
+            # now we group them based on this dictionary
+            self._group_nodes()
+                        
+    def _get_nodes_at_depth(self, depth) -> list[AbstractTreeNode]:
+        node_list = []
+        self._collect_nodes_at_depth(self.root, depth, 0, node_list)
+        return node_list
+
+    def _collect_nodes_at_depth(self, node, target_depth, current_depth, node_list) -> list[AbstractTreeNode]:
         if current_depth == target_depth:
-            nodes.append(node)
+            node_list.append(node)
         elif current_depth < target_depth:
             for child in node.children:
-                self._collect_nodes_at_depth(child, target_depth, current_depth + 1, nodes)
+                self._collect_nodes_at_depth(child, target_depth, current_depth + 1, node_list)
 
-    def _group_nodes(self, node: AbstractTreeNode, depth: int):
-        for abstract_node in self.state_abstraction.get(depth, []):
-            # we merge the nodes if they are similar AND have the same parent IMPORTANT!
-            print(f"{node} and {abstract_node}")
-            print(f"e_r = {self._calculate_reward_error(node, abstract_node)}")
-            print(f"e_t = {self._calculate_transition_error(node, abstract_node)}")
-            if (self._is_similar(node, abstract_node)) and (node.parent == abstract_node.parent):
-                print(f"merging node1: {node} & node2: {abstract_node}")
-                abstract_node.merge_with(node)
-                return
+    def _group_nodes(self) -> None:
+
+        # set of nodes to check if they have already been used
+        grouped_nodes = set()
+
+        for node in self.nodes_to_merge:
+            # if this node has been grouped already, we skip it
+            if node in grouped_nodes:
+                continue
+            
+            for other_node in self.nodes_to_merge[node]:
+                if other_node not in grouped_nodes and (node.parent == other_node.parent):
+                    print(f"{node.parent} {other_node.parent}")
+                    grouped_nodes.add(node)
+                    node.merge_with(other_node)
+                    grouped_nodes.add(other_node)
+                    
+            grouped_nodes.add(node)
+        #reset nodes to merge
+        self.nodes_to_merge = {}
 
     def _is_similar(self, node1: AbstractTreeNode, node2: AbstractTreeNode):
         error_r = self._calculate_reward_error(node1, node2)
@@ -150,9 +178,18 @@ class EMCTSAgent:
         return distance
 
     def revert_abstraction(self):
-        for node in self.get_all_nodes():
-            node.unmerge()
-        self.state_abstraction.clear()
+        # similar to merging, we start at the bottom and unmerge
+        max_depth = self._get_max_depth(self.root)
+
+        for depth in reversed(range(max_depth + 1)):
+
+            #get nodes at each depth
+            nodes_at_depth = self._get_nodes_at_depth(depth)
+            # print(f"nodes at depth {depth}: {nodes_at_depth}")
+            for node in nodes_at_depth:
+                #check the actions to see if the node has been merged
+                node.unmerge()
+
 
     def best_action_sequence(self) -> tuple[list, AbstractTreeNode]:
         node = self.root
@@ -160,7 +197,7 @@ class EMCTSAgent:
         
         while node.children:
             best_child = node.best_child(exploration_weight=0)
-            actions.append(best_child.action)
+            actions.append(best_child.action[0])
             node = best_child
         
         return (actions, node)

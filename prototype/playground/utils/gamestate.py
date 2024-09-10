@@ -1,5 +1,5 @@
-from utils.character import Player, ATTACK_DAMAGE, MOVEMENT_LIMIT
-from utils.rewards import calculate_reward
+from playground.utils.character import Player, ATTACK_DAMAGE, MOVEMENT_LIMIT
+from playground.utils.rewards import calculate_reward
 import copy
 import random
 
@@ -24,7 +24,14 @@ class GameState():
             self.opponent = Player(name="Opp", start_position=(12,12), health=20, movement_points=0)
         
         self.reward = calculate_reward(self)
+    
+    # override eq method
+    # check if all main values of the gamestate are the same
+    def __eq__(self, other) -> bool:
+        return (self.turn == other.turn) and (self.player.position == other.player.position) and (self.opponent.position == other.opponent.position) and (self.reward == other.reward) and (self.opponent.health == other.opponent.health) and (self.player.movement_points == other.player.movement_points)
         
+    def __hash__(self) -> int:
+        return hash((self.player.position[0], self.player.position[1], self.opponent.health, self.player.movement_points, self.turn, self.reward))
     
     # check if the game is done if either player is dead or max turns have been reached
     def check_done(self) -> None:

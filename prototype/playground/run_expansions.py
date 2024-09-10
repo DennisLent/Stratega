@@ -10,7 +10,7 @@ def run_test_case(agent_class, game_state_class, description):
     agent = agent_class(game_state, time_limit=0.5)
     
     # run a single expansion
-    for i in range(15):
+    for i in range(25):
         node = agent.select(agent.root)
         new_node = agent.expand(node)
         reward = agent.simulate(new_node)
@@ -19,10 +19,16 @@ def run_test_case(agent_class, game_state_class, description):
 
         # only for EMCTS agent
         if isinstance(agent, EMCTSAgent):
-            if i % agent.batch_size == 0:
+            if (i>0) and (i % agent.batch_size) == 0:
                 print(f"Before homomorphism, node count: {agent.count_nodes()}")
                 agent.update_abstraction()
                 print(f"After homomorphism, node count: {agent.count_nodes()}")
+                agent.root.pretty_print()
+            
+            if (i == 15):
+                agent.revert_abstraction()
+
+    print(f"best actions = {agent.best_action_sequence()}")
 
 def main():
     # Test case for regular MCTS

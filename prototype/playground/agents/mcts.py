@@ -1,6 +1,6 @@
 import time
 import random
-from utils.tree import GameState, TreeNode, copy
+from playground.utils.tree import GameState, TreeNode, copy
 
 # MCTS agent to run the game
 class MCTSAgent:
@@ -30,9 +30,9 @@ class MCTSAgent:
 
     def expand(self, node: TreeNode) -> TreeNode:
         available_moves = node.game_state.get_available_moves()
-        print(f"available moves = {available_moves}")
+        # print(f"available moves = {available_moves}")
         tried_moves = [child.action for child in node.children]
-        print(f"tried moves = {tried_moves}")
+        # print(f"tried moves = {tried_moves}")
 
         for move in available_moves:
             if move not in tried_moves:
